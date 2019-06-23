@@ -19,14 +19,14 @@ $user->readOne();
 
 if ($user->username != null) {
  $userArr = array(
-  "id" => intval($user->id),
+  "id" => $user->id,
   "username" => $user->username,
   "firstname" => $user->firstname,
   "lastname" => $user->lastname,
   "email" => $user->email,
   "profilePhoto" => $user->profilePhoto,
   "type" => $user->type,
-  "activate" => (intval($user->activate) === 1)
+  "activate" => $user->activate
  );
 
  http_response_code(200);

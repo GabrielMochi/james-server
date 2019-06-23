@@ -18,7 +18,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
   extract($row);
 
   $userItem = array(
-    "id" => $id,
+    "id" => intval($id),
     "username" => $username,
     "fisrtname" => $firstname,
     "lastname" => $lastname,
