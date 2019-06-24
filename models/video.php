@@ -59,7 +59,7 @@ class Video {
 
     $this->id = htmlspecialchars(strip_tags($this->id));
 
-    $stmt->bindParam(1, $this->id);
+    $stmt->bindParam(1, $this->id, PDO::PARAM_INT);
     $stmt->execute();
 
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -76,11 +76,59 @@ class Video {
 
     $user->id = intval($row['userId']);
 
-    $user.readOne();
+    $user->readOne();
 
     $this->user = $user;
 
     $this->addOneView();
+  }
+
+  function update () {
+    $query = "UPDATE
+      ".$this->tableName."
+    SET
+      title = :title
+      path = :path
+      thumbnailPhoto = :thumbnailPhoto
+      likes = :likes
+      dislikes = :dislikes
+      views = :views
+      userId = :userId
+    WHERE id = :id";
+
+    $stmt = $this->conn->prepare($query);
+
+    $this->id = htmlspecialchars(strip_tags($this->id));
+    $this->title = htmlspecialchars(strip_tags($this->title));
+    $this->path = htmlspecialchars(strip_tags($this->path));
+    $this->thumbnailPhoto = htmlspecialchars(strip_tags($this->thumbnailPhoto));
+    $this->likes = htmlspecialchars(strip_tags($this->likes));
+    $this->dislikes = htmlspecialchars(strip_tags($this->dislikes));
+    $this->views = htmlspecialchars(strip_tags($this->views));
+    $this->user->id = htmlspecialchars(strip_tags($this->user->id));
+
+    $stmt->bindParam(':id', $this->id, PDO::PARAM_STR);
+    $stmt->bindParam(':title', $this->title, PDO::PARAM_STR);
+    $stmt->bindParam(':path', $this->path, PDO::PARAM_STR);
+    $stmt->bindParam(':thumbnailPhoto', $this->thumbnailPhoto, PDO::PARAM_STR);
+    $stmt->bindParam(':likes', $this->likes, PDO::PARAM_INT);
+    $stmt->bindParam(':dislikes', $this->dislikes, PDO::PARAM_INT);
+    $stmt->bindParam(':views', $this->views, PDO::PARAM_INT);
+    $stmt->bindParam(':userId', $this->user->id, PDO::PARAM_INT);
+
+    return $stmt->execute();
+  }
+
+  function delete () {
+    $query = "DELETE FROM ".$this->tableName." WHERE id = ?";
+
+    $stmt = $this->conn->prepare($query);
+
+    $this->id=htmlspecialchars(strip_tags($this->id));
+
+    $stmt->bindParam(1, $this->id);
+
+    return $stmt->execute();
   }
 
   private function addOneView () {

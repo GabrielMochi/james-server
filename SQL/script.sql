@@ -70,28 +70,29 @@ DROP TABLE IF EXISTS `james`.`category` ;
 CREATE TABLE IF NOT EXISTS `james`.`category` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(90) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `james`.`category_has_video`
+-- Table `james`.`videoHasCategory`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `james`.`category_has_video` ;
+DROP TABLE IF EXISTS `james`.`videoHasCategory` ;
 
-CREATE TABLE IF NOT EXISTS `james`.`category_has_video` (
+CREATE TABLE IF NOT EXISTS `james`.`videoHasCategory` (
   `categoryId` INT NOT NULL,
   `videoId` INT NOT NULL,
   `videoUserId` INT NOT NULL,
   PRIMARY KEY (`categoryId`, `videoId`, `videoUserId`),
-  INDEX `fk_category_has_video_video1_idx` (`videoId` ASC, `videoUserId` ASC),
-  INDEX `fk_category_has_video_category1_idx` (`categoryId` ASC),
-  CONSTRAINT `fk_category_has_video_category1`
+  INDEX `fk_videoHasCategory_video1_idx` (`videoId` ASC, `videoUserId` ASC),
+  INDEX `fk_videoHasCategory_category1_idx` (`categoryId` ASC),
+  CONSTRAINT `fk_videoHasCategory_category1`
     FOREIGN KEY (`categoryId`)
     REFERENCES `james`.`category` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_category_has_video_video1`
+  CONSTRAINT `fk_videoHasCategory_video1`
     FOREIGN KEY (`videoId` , `videoUserId`)
     REFERENCES `james`.`video` (`id` , `userId`)
     ON DELETE NO ACTION
