@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
@@ -24,13 +26,23 @@ $staticProfilePhotoPath = "/assets/user/profile/".$hash.".".$profilePhotoExtensi
 $user->id = $id;
 $user->profilePhoto = $staticProfilePhotoPath;
 
-if ($user->editProfilePhoto()) {
-  move_uploaded_file($_FILES['profilePhoto']['tmp_name'], $profilePhotoPath);
-
-  http_response_code(200);
-  echo json_encode($staticProfilePhotoPath);
+if (isset($_SESSION["userId"]) && isset($_SESSION["userType"])) {
+  if ($_SESSION["userId"] === $user->id || $_SESSION["userType"] === "ADMIN") {
+    if ($user->editProfilePhoto()) {
+      move_uploaded_file($_FILES['profilePhoto']['tmp_name'], $profilePhotoPath);
+    
+      http_response_code(200);
+      echo json_encode($staticProfilePhotoPath);
+    } else {
+      http_response_code(503);
+      echo json_encode(array("message" => "Unable to edit profile photo."));
+    }
+  } else {
+    http_response_code(401);
+    echo json_encode(array("message" => "Unauthorized."));
+  }
 } else {
-  http_response_code(503);
-  echo json_encode(array("message" => "Unable to edit profile photo."));
+  http_response_code(401);
+  echo json_encode(array("message" => "Unauthorized."));
 }
 ?>

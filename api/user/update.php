@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: PUT");
@@ -24,11 +26,21 @@ $user->profilePhoto = $data->profilePhoto;
 $user->type = $data->type;
 $user->activate = $data->activate ? 1 : 0;
 
-if ($user->update()) {
-  http_response_code(200);
-  echo json_encode(array("message" => "User was updated."));
+if (isset($_SESSION["userId"]) && isset($_SESSION["userType"])) {
+  if ($_SESSION["userId"] === $user->id || $_SESSION["userType"] === "ADMIN") {
+    if ($user->update()) {
+      http_response_code(200);
+      echo json_encode(array("message" => "User was updated."));
+    } else {
+      http_response_code(503);
+      echo json_encode(array("message" => "Unable to update user."));
+    }
+  } else {
+    http_response_code(401);
+    echo json_encode(array("message" => "Unauthorized."));
+  }
 } else {
-  http_response_code(503);
-  echo json_encode(array("message" => "Unable to update user."));
+  http_response_code(401);
+  echo json_encode(array("message" => "Unauthorized."));
 }
 ?>

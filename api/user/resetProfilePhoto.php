@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
@@ -8,32 +10,43 @@ include_once "../../models/user.php";
 $database = new Database();
 $db = $database->getConnection();
 
+$user = new User($db);
+
 $uploadDir = "../../assets/user/profile";
-
 $id = isset($_GET['id']) ? intval($_GET['id']) : die();
-$hash = md5(strval($id));
 
-$paths = glob($uploadDir."/".$hash.".*");
+$user->id = $id;
 
-if (count($paths) > 0) {
-  $profilePhotoPath = $paths[0];
+if (isset($_SESSION["userId"]) && isset($_SESSION["userType"])) {
+  if ($_SESSION["userId"] === $user->id || $_SESSION["userType"] === "ADMIN") {
+    $hash = md5(strval($id));
 
-  $user = new User($db);
+    $paths = glob($uploadDir."/".$hash.".*");
 
-  $user->id = $id;
-  $user->profilePhoto = "/assets/user/profile/default_avatar.png";
+    if (count($paths) > 0) {
+      $profilePhotoPath = $paths[0];
 
-  if ($user->editProfilePhoto()) {
-    unlink($profilePhotoPath);
-  
-    http_response_code(200);
-    echo json_encode($user->profilePhoto);
+      $user->profilePhoto = "/assets/user/profile/default_avatar.png";
+
+      if ($user->editProfilePhoto()) {
+        unlink($profilePhotoPath);
+      
+        http_response_code(200);
+        echo json_encode($user->profilePhoto);
+      } else {
+        http_response_code(503);
+        echo json_encode(array("message" => "Unable to edit profile photo."));
+      }
+    } else {
+      http_response_code(204);
+      echo json_encode(array("message" => "No photo was found with id: ".$id."."));
+    }
   } else {
-    http_response_code(503);
-    echo json_encode(array("message" => "Unable to edit profile photo."));
+    http_response_code(401);
+    echo json_encode(array("message" => "Unauthorized."));
   }
 } else {
-  http_response_code(204);
-  echo json_encode(array("message" => "No photo was found with id: ".$id."."));
+  http_response_code(401);
+  echo json_encode(array("message" => "Unauthorized."));
 }
 ?>

@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
@@ -22,6 +24,9 @@ if (!empty($data->username) && !empty($data->password)) {
   $user->login();
 
   if ($user->id != null) {
+    $_SESSION["userId"] = $user->id;
+    $_SESSION["userType"] = $user->type;
+
     $userArr = array(
       "id" => $user->id,
       "username" => $user->username,

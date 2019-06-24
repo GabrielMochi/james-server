@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
@@ -29,6 +31,9 @@ if (
   $user->password = $data->password;
 
   if ($user->create()) {
+    $_SESSION["userId"] = $user->id;
+    $_SESSION["userType"] = "USER"; // all created users are set as USER as default.
+
     http_response_code(201);
     echo json_encode(array("message" => "User was created."));
   } else {
