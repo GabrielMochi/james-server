@@ -72,19 +72,19 @@ class User {
 
     $this->id = htmlspecialchars(strip_tags($this->id));
 
-    $stmt->bindParam(1, $this->id);
+    $stmt->bindParam(1, $this->id, PDO::PARAM_INT);
     $stmt->execute();
 
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $this->id = $row['id'];
+    $this->id = intval($row['id']);
     $this->username = $row['username'];
     $this->firstname = $row['firstname'];
     $this->lastname = $row['lastname'];
     $this->email = $row['email'];
     $this->profilePhoto = $row['profilePhoto'];
     $this->type = $row['type'];
-    $this->activate = $row['activate'];
+    $this->activate = (intval($row['activate']) === 1);
   }
 
   function update () {
@@ -210,14 +210,32 @@ class User {
 
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $this->id = $row['id'];
+    $this->id = intval($row['id']);
     $this->username = $row['username'];
     $this->firstname = $row['firstname'];
     $this->lastname = $row['lastname'];
     $this->email = $row['email'];
     $this->profilePhoto = $row['profilePhoto'];
     $this->type = $row['type'];
-    $this->activate = $row['activate'];
+    $this->activate = (intval($row['activate']) === 1);
+  }
+
+  function editProfilePhoto () {
+    $query = "UPDATE
+      ".$this->tableName."
+    SET
+      profilePhoto = :profilePhoto
+    WHERE id = :id";
+
+    $stmt = $this->conn->prepare($query);
+
+    $this->id = htmlspecialchars(strip_tags($this->id));
+    $this->profilePhoto = htmlspecialchars(strip_tags($this->profilePhoto));
+
+    $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+    $stmt->bindParam(':profilePhoto', $this->profilePhoto, PDO::PARAM_STR);
+
+    return $stmt->execute();
   }
 
 }

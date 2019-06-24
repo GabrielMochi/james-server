@@ -2,19 +2,36 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
+include_once "../../config/database.php";
+include_once "../../models/user.php";
+
+$database = new Database();
+$db = $database->getConnection();
+
 $uploadDir = "../../assets/user/profile";
-$id = isset($_GET['id']) ? $_GET['id'] : die();
-$hash = md5($id);
+
+$id = isset($_GET['id']) ? intval($_GET['id']) : die();
+$hash = md5(strval($id));
 
 $paths = glob($uploadDir."/".$hash.".*");
 
 if (count($paths) > 0) {
   $profilePhotoPath = $paths[0];
 
-  unlink($profilePhotoPath);
+  $user = new User($db);
 
-  http_response_code(200);
-  echo json_encode("/assets/user/profile/default_avatar.png");
+  $user->id = $id;
+  $user->profilePhoto = "/assets/user/profile/default_avatar.png";
+
+  if ($user->editProfilePhoto()) {
+    unlink($profilePhotoPath);
+  
+    http_response_code(200);
+    echo json_encode($user->profilePhoto);
+  } else {
+    http_response_code(503);
+    echo json_encode(array("message" => "Unable to edit profile photo."));
+  }
 } else {
   http_response_code(204);
   echo json_encode(array("message" => "No photo was found with id: ".$id."."));

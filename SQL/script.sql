@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `james`.`user` (
   `lastname` VARCHAR(90) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `password` VARCHAR(90) NOT NULL,
-  `profilePhoto` VARCHAR(255) NOT NULL DEFAULT '/data/user/profile/default_avatar.png',
+  `profilePhoto` VARCHAR(255) NOT NULL DEFAULT '/assets/user/profile/default_avatar.png',
   `type` ENUM('ADMIN', 'USER') NOT NULL DEFAULT 'USER',
   `activate` TINYINT NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),

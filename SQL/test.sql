@@ -11,6 +11,15 @@ INSERT INTO user (
   "123@gab"
 );
 
+INSERT INTO `video` (
+	title, path, thumbnailPhoto, userId
+) VALUES (
+	'A Gravidade NÃO é uma Força',
+    '/assets/video/data/A_Gravidade_NÃO_é_uma_Força.mp4',
+    '/assets/video/thumbnail/A_Gravidade_NÃO_é_uma_Força.jpg',
+    1
+);
+
 SELECT
       id, username, firstname,
       lastname, email, profilePhoto,
@@ -26,3 +35,5 @@ SELECT
   lastname, email, profilePhoto,
   type, activate
 FROM user;
+
+SELECT * FROM video;

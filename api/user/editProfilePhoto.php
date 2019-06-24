@@ -5,16 +5,32 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-$id = isset($_POST['id']) ? $_POST['id'] : die();
-$hash = md5($id);
+include_once "../../config/database.php";
+include_once "../../models/user.php";
+
+$database = new Database();
+$db = $database->getConnection();
+
+$user = new User($db);
+
+$id = isset($_POST['id']) ? intval($_POST['id']) : die();
+$hash = md5(strval($id));
 $profilePhotoInfo = pathinfo($_FILES['profilePhoto']['name']);
 
 $profilePhotoExtension = $profilePhotoInfo['extension'];
 $profilePhotoPath = "../../assets/user/profile/".$hash.".".$profilePhotoExtension;
 $staticProfilePhotoPath = "/assets/user/profile/".$hash.".".$profilePhotoExtension;
 
-move_uploaded_file($_FILES['profilePhoto']['tmp_name'], $profilePhotoPath);
+$user->id = $id;
+$user->profilePhoto = $staticProfilePhotoPath;
 
-http_response_code(200);
-echo json_encode($staticProfilePhotoPath);
+if ($user->editProfilePhoto()) {
+  move_uploaded_file($_FILES['profilePhoto']['tmp_name'], $profilePhotoPath);
+
+  http_response_code(200);
+  echo json_encode($staticProfilePhotoPath);
+} else {
+  http_response_code(503);
+  echo json_encode(array("message" => "Unable to edit profile photo."));
+}
 ?>
