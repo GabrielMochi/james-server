@@ -136,6 +136,44 @@ class Video {
     return $stmt->execute();
   }
 
+  function addLike () {
+    $this->readOne();
+
+    $query = "UPDATE
+      ".$this->tableName."
+    SET
+      likes = :likes
+    WHERE id = :id";
+
+    $stmt = $this->conn->prepare($query);
+
+    $this->likes++;
+
+    $stmt->bindParam(':likes', $this->likes, PDO::PARAM_INT);
+    $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+    return $stmt->execute();
+  }
+
+  function addDislike () {
+    $this->readOne();
+
+    $query = "UPDATE
+      ".$this->tableName."
+    SET
+      dislikes = :dislikes
+    WHERE id = :id";
+
+    $stmt = $this->conn->prepare($query);
+
+    $this->dislikes++;
+
+    $stmt->bindParam(':dislikes', $this->dislikes, PDO::PARAM_INT);
+    $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+    return $stmt->execute();
+  }
+
   private function addOneView () {
     $query = "UPDATE
       ".$this->tableName."
