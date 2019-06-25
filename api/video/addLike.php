@@ -17,16 +17,11 @@ $video = new Video($db);
 
 $video->id = isset($_GET['id']) ? intval($_GET['id']) : die();
 
-if (isset($_SESSION['userId'])) {
-  if ($video->addLike()) {
-    http_response_code(200);
-    echo json_encode($video->likes);
-  } else {
-    http_response_code(503);
-    echo json_encode(array("message" => "Unable to add like to the video."));
-  }
+if ($video->addLike()) {
+  http_response_code(200);
+  echo json_encode($video->likes);
 } else {
-  http_response_code(401);
-  echo json_encode(array("message" => "Unauthorized."));
+  http_response_code(503);
+  echo json_encode(array("message" => "Unable to add like to the video."));
 }
 ?>

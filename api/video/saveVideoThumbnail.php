@@ -16,15 +16,10 @@ if (isset($_FILES['thumbnailPhoto'])) {
   $thumbnailPhotoPath = "../../assets/video/thumbnail/".$hash.".".$thumbnailPhotoExtension;
   $staticThumbnailPhotoPath = "/assets/video/thumbnail/".$hash.".".$thumbnailPhotoExtension;
   
-  if (isset($_SESSION["userId"])) {
-    move_uploaded_file($_FILES['thumbnailPhoto']['tmp_name'], $thumbnailPhotoPath);
+  move_uploaded_file($_FILES['thumbnailPhoto']['tmp_name'], $thumbnailPhotoPath);
       
-    http_response_code(200);
-    echo json_encode($staticThumbnailPhotoPath);
-  } else {
-    http_response_code(401);
-    echo json_encode(array("message" => "Unauthorized."));
-  }
+  http_response_code(200);
+  echo json_encode($staticThumbnailPhotoPath);
 } else {
   http_response_code(400);
   echo json_encode(array("message" => "Missing param 'thumbnailPhoto' in data."));

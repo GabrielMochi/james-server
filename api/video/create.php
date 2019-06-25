@@ -20,87 +20,77 @@ $video = new Video($db);
 
 $data = json_decode(file_get_contents("php://input"));
 
-if (isset($_SESSION['userId'])) {
-  if ($_SESSION['userId'] === $data->user->id) {
-    if (
-      !empty($data->title) &&
-      !empty($data->path) &&
-      !empty($data->thumbnailPhoto) &&
-      !empty($data->user) &&
-      !empty($data->categories)
-    ) {
-      $video->title = $data->title;
-      $video->path = $data->path;
-      $video->thumbnailPhoto = $data->thumbnailPhoto;
-      $video->user = $data->user;
+if (
+  !empty($data->title) &&
+  !empty($data->path) &&
+  !empty($data->thumbnailPhoto) &&
+  !empty($data->user) &&
+  !empty($data->categories)
+) {
+  $video->title = $data->title;
+  $video->path = $data->path;
+  $video->thumbnailPhoto = $data->thumbnailPhoto;
+  $video->user = $data->user;
 
-      $video->create();
+  $video->create();
 
-      if ($video->id != null) {
-        foreach ($data->categories as $categoryName) {
-          $categoryName = strtolower($categoryName);
+  if ($video->id != null) {
+    foreach ($data->categories as $categoryName) {
+      $categoryName = strtolower($categoryName);
 
-          $category = new Category($db);
+      $category = new Category($db);
 
-          $category->name = $categoryName;
+      $category->name = $categoryName;
 
-          $category->readOneByName();
+      $category->readOneByName();
 
-          if ($category->id != null) {
-            if (!createRelation($db, $video, $category)) {
-              http_response_code(503);
-              echo json_encode(array("message" => "Unable to create video."));
-              return;
-            }
-          } else {
-            $category->name = $categoryName;
-            $category->create();
-            
-            if (!createRelation($db, $video, $category)) {
-              http_response_code(503);
-              echo json_encode(array("message" => "Unable to create video."));
-              return;
-            }
-          }
+      if ($category->id != null) {
+        if (!createRelation($db, $video, $category)) {
+          http_response_code(503);
+          echo json_encode(array("message" => "Unable to create video."));
+          return;
         }
-
-        $videoArr = array(
-          "id" => intval($video->id),
-          "title" => $video->title,
-          "path" => $video->path,
-          "thumbnailPhoto" => $video->thumbnailPhoto,
-          "likes" => intval($video->likes),
-          "dislikes" => intval($video->dislikes),
-          "views" => intval($video->views),
-          "user" => array(
-            "id" => intval($video->user->id),
-            "username" => $video->user->username,
-            "firstname" => $video->user->firstname,
-            "lastname" => $video->user->lastname,
-            "email" => $video->user->email,
-            "profilePhoto" => $video->user->profilePhoto,
-            "type" => $video->user->type,
-            "activate" => $video->user->activate
-            )
-        );
-    
-        http_response_code(200);
-        echo json_encode($videoArr);
       } else {
-        http_response_code(503);
-        echo json_encode(array("message" => "Unable to create video."));
+        $category->name = $categoryName;
+        $category->create();
+        
+        if (!createRelation($db, $video, $category)) {
+          http_response_code(503);
+          echo json_encode(array("message" => "Unable to create video."));
+          return;
+        }
       }
-    } else {
-      http_response_code(400);
-      echo json_encode(array("message" => "Unable to create video. Data is incomplete."));
     }
+
+    $videoArr = array(
+      "id" => intval($video->id),
+      "title" => $video->title,
+      "path" => $video->path,
+      "thumbnailPhoto" => $video->thumbnailPhoto,
+      "likes" => intval($video->likes),
+      "dislikes" => intval($video->dislikes),
+      "views" => intval($video->views),
+      "user" => array(
+        "id" => intval($video->user->id),
+        "username" => $video->user->username,
+        "firstname" => $video->user->firstname,
+        "lastname" => $video->user->lastname,
+        "email" => $video->user->email,
+        "profilePhoto" => $video->user->profilePhoto,
+        "type" => $video->user->type,
+        "activate" => $video->user->activate
+        )
+    );
+
+    http_response_code(200);
+    echo json_encode($videoArr);
   } else {
-    http_response_code(401);
-    echo json_encode(array("message" => "Unauthorized."));
+    http_response_code(503);
+    echo json_encode(array("message" => "Unable to create video."));
   }
 } else {
-  http_response_code(401);
-  echo json_encode(array("message" => "Unauthorized."));
+  http_response_code(400);
+  echo json_encode(array("message" => "Unable to create video. Data is incomplete."));
 }
 
 function createRelation ($db, $video, $category) {

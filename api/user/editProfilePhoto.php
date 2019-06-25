@@ -27,23 +27,13 @@ $staticProfilePhotoPath = "/assets/user/profile/".$hash.".".$profilePhotoExtensi
 $user->id = $id;
 $user->profilePhoto = $staticProfilePhotoPath;
 
-if (isset($_SESSION["userId"]) && isset($_SESSION["userType"])) {
-  if ($_SESSION["userId"] === $user->id || $_SESSION["userType"] === "ADMIN") {
-    if ($user->editProfilePhoto()) {
-      move_uploaded_file($_FILES['profilePhoto']['tmp_name'], $profilePhotoPath);
-    
-      http_response_code(200);
-      echo json_encode($staticProfilePhotoPath);
-    } else {
-      http_response_code(503);
-      echo json_encode(array("message" => "Unable to edit profile photo."));
-    }
-  } else {
-    http_response_code(401);
-    echo json_encode(array("message" => "Unauthorized."));
-  }
+if ($user->editProfilePhoto()) {
+  move_uploaded_file($_FILES['profilePhoto']['tmp_name'], $profilePhotoPath);
+
+  http_response_code(200);
+  echo json_encode($staticProfilePhotoPath);
 } else {
-  http_response_code(401);
-  echo json_encode(array("message" => "Unauthorized."));
+  http_response_code(503);
+  echo json_encode(array("message" => "Unable to edit profile photo."));
 }
 ?>

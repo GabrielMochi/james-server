@@ -16,15 +16,10 @@ if (isset($_FILES['videoData'])) {
   $videoDataPath = "../../assets/video/data/".$hash.".".$videoDataExtension;
   $staticVideoDataPath = "/assets/video/data/".$hash.".".$videoDataExtension;
 
-  if (isset($_SESSION["userId"])) {
-    move_uploaded_file($_FILES['videoData']['tmp_name'], $videoDataPath);
+  move_uploaded_file($_FILES['videoData']['tmp_name'], $videoDataPath);
       
-    http_response_code(200);
-    echo json_encode($staticVideoDataPath);
-  } else {
-    http_response_code(401);
-    echo json_encode(array("message" => "Unauthorized."));
-  }
+  http_response_code(200);
+  echo json_encode($staticVideoDataPath);
 } else {
   http_response_code(400);
   echo json_encode(array("message" => "Missing param 'videoData' in data."));

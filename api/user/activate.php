@@ -17,21 +17,11 @@ $user = new User($db);
 
 $user->id = isset($_GET['id']) ? intval($_GET['id']) : die();
 
-if (isset($_SESSION["userId"]) && isset($_SESSION["userType"])) {
-  if ($_SESSION["userId"] === $user->id || $_SESSION["userType"] === "ADMIN") {
-    if ($user->activate()) {
-      http_response_code(200);
-      echo json_encode(array("message" => "The user was activated."));
-    } else {
-      http_response_code(503);
-      echo json_encode(array("message" => "Unable to activate user."));
-    }
-  } else {
-    http_response_code(401);
-    echo json_encode(array("message" => "Unauthorized."));
-  }
+if ($user->activate()) {
+  http_response_code(200);
+  echo json_encode(array("message" => "The user was activated."));
 } else {
-  http_response_code(401);
-  echo json_encode(array("message" => "Unauthorized."));
+  http_response_code(503);
+  echo json_encode(array("message" => "Unable to activate user."));
 }
 ?>

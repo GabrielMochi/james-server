@@ -17,21 +17,11 @@ $user = new User($db);
 
 $user->id = isset($_GET['id']) ? intval($_GET['id']) : die();
 
-if (isset($_SESSION["userId"]) && isset($_SESSION["userType"])) {
-  if ($_SESSION["userId"] === $user->id || $_SESSION["userType"] === "ADMIN") {
-    if ($user->setAsUser()) {
-      http_response_code(200);
-      echo json_encode(array("message" => "The type of the user was set as 'USER'."));
-    } else {
-      http_response_code(503);
-      echo json_encode(array("message" => "Unable to set the type of the user as 'USER'."));
-    }
-  } else {
-    http_response_code(401);
-    echo json_encode(array("message" => "Unauthorized."));
-  }
+if ($user->setAsUser()) {
+  http_response_code(200);
+  echo json_encode(array("message" => "The type of the user was set as 'USER'."));
 } else {
-  http_response_code(401);
-  echo json_encode(array("message" => "Unauthorized."));
+  http_response_code(503);
+  echo json_encode(array("message" => "Unable to set the type of the user as 'USER'."));
 }
 ?>

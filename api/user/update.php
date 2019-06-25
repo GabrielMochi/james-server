@@ -27,21 +27,11 @@ $user->profilePhoto = $data->profilePhoto;
 $user->type = $data->type;
 $user->activate = $data->activate ? 1 : 0;
 
-if (isset($_SESSION["userId"]) && isset($_SESSION["userType"])) {
-  if ($_SESSION["userId"] === $user->id || $_SESSION["userType"] === "ADMIN") {
-    if ($user->update()) {
-      http_response_code(200);
-      echo json_encode(array("message" => "User was updated."));
-    } else {
-      http_response_code(503);
-      echo json_encode(array("message" => "Unable to update user."));
-    }
-  } else {
-    http_response_code(401);
-    echo json_encode(array("message" => "Unauthorized."));
-  }
+if ($user->update()) {
+  http_response_code(200);
+  echo json_encode(array("message" => "User was updated."));
 } else {
-  http_response_code(401);
-  echo json_encode(array("message" => "Unauthorized."));
+  http_response_code(503);
+  echo json_encode(array("message" => "Unable to update user."));
 }
 ?>

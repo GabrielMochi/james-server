@@ -17,34 +17,24 @@ $user = new User($db);
 
 $user->id = isset($_GET['id']) ? intval($_GET['id']) : die();
 
-if (isset($_SESSION["userId"]) && isset($_SESSION["userType"])) {
-  if ($_SESSION["userId"] === $user->id || $_SESSION["userType"] === "ADMIN") {
-    $user->readOne();
+$user->readOne();
 
-    if ($user->username != null) {
-      $userArr = array(
-        "id" => $user->id,
-        "username" => $user->username,
-        "firstname" => $user->firstname,
-        "lastname" => $user->lastname,
-        "email" => $user->email,
-        "profilePhoto" => $user->profilePhoto,
-        "type" => $user->type,
-        "activate" => $user->activate
-      );
+if ($user->username != null) {
+  $userArr = array(
+    "id" => $user->id,
+    "username" => $user->username,
+    "firstname" => $user->firstname,
+    "lastname" => $user->lastname,
+    "email" => $user->email,
+    "profilePhoto" => $user->profilePhoto,
+    "type" => $user->type,
+    "activate" => $user->activate
+  );
 
-      http_response_code(200);
-      echo json_encode($userArr);
-    } else {
-      http_response_code(204);
-      echo json_encode(array("message" => "User does not exist."));
-    }
-  } else {
-    http_response_code(401);
-    echo json_encode(array("message" => "Unauthorized."));
-  }
+  http_response_code(200);
+  echo json_encode($userArr);
 } else {
-  http_response_code(401);
-  echo json_encode(array("message" => "Unauthorized."));
+  http_response_code(204);
+  echo json_encode(array("message" => "User does not exist."));
 }
 ?>
