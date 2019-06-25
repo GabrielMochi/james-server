@@ -37,3 +37,8 @@ SELECT
 FROM user;
 
 SELECT * FROM video;
+
+SELECT * FROM category;
+
+DELETE FROM `video` WHERE id = 1;
+DELETE FROM `user` WHERE id = 1;

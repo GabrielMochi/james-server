@@ -27,7 +27,7 @@ if (isset($_SESSION["userType"])) {
       $userItem = array(
         "id" => intval($id),
         "username" => $username,
-        "fisrtname" => $firstname,
+        "firstname" => $firstname,
         "lastname" => $lastname,
         "email" => $email,
         "profilePhoto" => $profilePhoto,

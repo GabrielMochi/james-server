@@ -43,13 +43,18 @@ class Video {
     $this->title = htmlspecialchars(strip_tags($this->title));
     $this->path = htmlspecialchars(strip_tags($this->path));
     $this->thumbnailPhoto = htmlspecialchars(strip_tags($this->thumbnailPhoto));
+    $this->user->id = htmlspecialchars(strip_tags($this->user->id));
 
     $stmt->bindParam(":title", $this->title, PDO::PARAM_STR);
     $stmt->bindParam(":path", $this->path, PDO::PARAM_STR);
     $stmt->bindParam(":thumbnailPhoto", $this->thumbnailPhoto, PDO::PARAM_STR);
     $stmt->bindParam(":userId", $this->user->id, PDO::PARAM_INT);
 
-    return $stmt->execute();
+    $stmt->execute();
+
+    $this->id = intval($this->conn->lastInsertId());
+
+    $this->readOne();
   }
 
   function readOne () {

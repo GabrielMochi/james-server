@@ -30,7 +30,7 @@ if (isset($_SESSION['userId'])) {
       "dislikes" => intval($video->dislikes),
       "views" => intval($video->views),
       "user" => array(
-        "id" => $video->user->id,
+        "id" => intval($video->user->id),
         "username" => $video->user->username,
         "firstname" => $video->user->firstname,
         "lastname" => $video->user->lastname,

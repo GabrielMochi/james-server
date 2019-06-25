@@ -57,7 +57,11 @@ class User {
     $stmt->bindParam(":email", $this->email, PDO::PARAM_STR);
     $stmt->bindParam(":password", $this->password, PDO::PARAM_STR);
 
-    return $stmt->execute();
+    $stmt->execute();
+
+    $this->id = intval($this->conn->lastInsertId());
+    
+    $this->readOne();
   }
 
   function readOne () {

@@ -31,12 +31,25 @@ if (
   $user->email = $data->email;
   $user->password = $data->password;
 
-  if ($user->create()) {
+  $user->create();
+
+  if ($user->id != null) {
     $_SESSION["userId"] = $user->id;
     $_SESSION["userType"] = "USER"; // all created users are set as USER as default.
 
-    http_response_code(201);
-    echo json_encode(array("message" => "User was created."));
+    $userArr = array(
+      "id" => $user->id,
+      "username" => $user->username,
+      "firstname" => $user->firstname,
+      "lastname" => $user->lastname,
+      "email" => $user->email,
+      "profilePhoto" => $user->profilePhoto,
+      "type" => $user->type,
+      "activate" => $user->activate
+    );
+
+    http_response_code(200);
+    echo json_encode($userArr);
   } else {
     http_response_code(503);
     echo json_encode(array("message" => "Unable to create user."));
